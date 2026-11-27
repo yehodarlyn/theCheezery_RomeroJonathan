@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -36,7 +36,7 @@ import romero.jonathan.thecheezery_romerojonathan.viewmodel.CartViewModel
 @Composable
 fun CartScreen(cartViewModel: CartViewModel){
     val items by cartViewModel.items.collectAsState()
-    val total by cartViewModel.total.collectAsState()
+    val total = items.sumOf { it.price.toDouble() }.toFloat()
 
     Column(Modifier.fillMaxSize().padding(horizontal = 32.dp)) {
         Text(
@@ -54,11 +54,11 @@ fun CartScreen(cartViewModel: CartViewModel){
             }
         }else{
             LazyColumn(Modifier.weight(1f)) {
-                itemsIndexed(items){ index, product ->
+                items(items, key = { it.id }) { product ->
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Text(product.name, fontSize = 20.sp, color = Color.DarkGray, modifier = Modifier.weight(1f))
                         Text("\$${product.price}", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Very_purple)
-                        IconButton(onClick = {cartViewModel.removeAt(index)}) {
+                        IconButton(onClick = {cartViewModel.remove(product.id)}) {
                             Icon(painterResource(R.drawable.delete), contentDescription = "Eliminar", tint = Pinky)
                         }
                     }

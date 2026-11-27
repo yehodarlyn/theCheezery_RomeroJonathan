@@ -32,7 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import romero.jonathan.thecheezery_romerojonathan.R
-import romero.jonathan.thecheezery_romerojonathan.data.Product
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
+import romero.jonathan.thecheezery_romerojonathan.model.data.database.entity.ProductEntity
 import romero.jonathan.thecheezery_romerojonathan.uitheme.DisabledGrey
 import romero.jonathan.thecheezery_romerojonathan.uitheme.HelloBunny
 import romero.jonathan.thecheezery_romerojonathan.uitheme.Less_Purple
@@ -47,6 +50,7 @@ fun ProductsScreen(
     cartViewModel: CartViewModel,
     viewModel: ProductsViewModel = viewModel()
 ) {
+    val products by viewModel.products.collectAsState(initial = emptyList())
     Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
         Text(
             text = viewModel.title,
@@ -57,18 +61,20 @@ fun ProductsScreen(
             modifier = Modifier.fillMaxWidth()
         )
         LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            items(viewModel.products) { product ->
-                ProductItem(product = product, onAddClick = { cartViewModel.addProduct(product) })
+            items(products, key = { it.id }) { product ->
+                ProductItem(product = product, onAddClick = { cartViewModel.add(product.name, product.price) })
             }
         }
     }
 }
 
 @Composable
-private fun ProductItem(product: Product, onAddClick: () -> Unit) {
+private fun ProductItem(product: ProductEntity, onAddClick: () -> Unit) {
+    val context = LocalContext.current
+    val imageId = product.image?.let { context.resources.getIdentifier(it, "drawable", context.packageName) }
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painter = painterResource(product.image),
+            painter = painterResource(imageId?.takeIf { it != 0 } ?: R.drawable.the_cheezery),
             contentDescription = product.name,
             contentScale = ContentScale.Crop,
             modifier = Modifier.size(80.dp).clip(CircleShape)

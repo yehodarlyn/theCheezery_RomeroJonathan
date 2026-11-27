@@ -32,6 +32,8 @@ import romero.jonathan.thecheezery_romerojonathan.uitheme.Purple_grey
 @Composable
 fun MenuScreen(
     onCategoryClick: (Category) -> Unit,
+    onCombos: () -> Unit,
+    onAddProduct: () -> Unit,
     onCartClick: () -> Unit
 ){
     Column(
@@ -57,7 +59,7 @@ fun MenuScreen(
                 items = listOf(
                     "Hot drinks" to { onCategoryClick(Category.HOT_DRINKS) },
                     "Salties" to { onCategoryClick(Category.SALTIES) },
-                    "Combos" to {  }
+                    "Combos" to onCombos
                 ),
                 modifier = Modifier.weight(1f)
             )
@@ -65,7 +67,7 @@ fun MenuScreen(
                 items = listOf(
                     "Cold drinks" to { onCategoryClick(Category.COLD_DRINKS) },
                     "Sweets" to { onCategoryClick(Category.SWEETS) },
-                    "Add new product" to {  }
+                    "Add new product" to onAddProduct
                 ),
                 modifier = Modifier.weight(1f)
             )
