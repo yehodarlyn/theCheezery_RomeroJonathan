@@ -14,7 +14,13 @@ import romero.jonathan.thecheezery_romerojonathan.screens.ProductsScreen
 import romero.jonathan.thecheezery_romerojonathan.screens.WelcomeScreen
 import romero.jonathan.thecheezery_romerojonathan.viewmodel.CartViewModel
 
+import romero.jonathan.thecheezery_romerojonathan.screens.CombosScreen
+import romero.jonathan.thecheezery_romerojonathan.screens.CatalogFormScreen
+
 object Routes {
+    const val COMBOS = "combos"
+    const val ADD_COMBO = "addCombo"
+    const val ADD_PRODUCT = "addProduct"
     const val WELCOME = "welcome"
     const val LOGIN = "login"
     const val MENU = "menu"
@@ -41,6 +47,8 @@ fun AppNavigation(cartViewModel: CartViewModel, modifier: Modifier = Modifier) {
         composable(Routes.MENU) {
             MenuScreen(
                 onCategoryClick = { navController.navigate(Routes.products(it.name)) },
+                onCombos = { navController.navigate(Routes.COMBOS) },
+                onAddProduct = { navController.navigate(Routes.ADD_PRODUCT) },
                 onCartClick = { navController.navigate(Routes.CART) }
             )
         }
@@ -49,6 +57,15 @@ fun AppNavigation(cartViewModel: CartViewModel, modifier: Modifier = Modifier) {
             arguments = listOf(navArgument("category") { type = NavType.StringType })
         ) {
             ProductsScreen(cartViewModel = cartViewModel)
+        }
+        composable(Routes.COMBOS) {
+            CombosScreen(onCreate = { navController.navigate(Routes.ADD_COMBO) }, onAdd = cartViewModel::add)
+        }
+        composable(Routes.ADD_COMBO) {
+            CatalogFormScreen(isCombo = true, onSaved = { navController.popBackStack() })
+        }
+        composable(Routes.ADD_PRODUCT) {
+            CatalogFormScreen(isCombo = false, onSaved = { navController.popBackStack() })
         }
         composable(Routes.CART) {
             CartScreen(cartViewModel = cartViewModel)
